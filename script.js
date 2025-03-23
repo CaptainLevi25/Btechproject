@@ -152,12 +152,46 @@ predictBtn.addEventListener("click", async () => {
   }, 2000); // Simulating a 2-second API response time
 });
 
-function fakeApiCall() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(
-        "<b>The image shows signs of Pyogenic granulomas and hemorrhage (Can lead to cancer).</b>"
-      );
-    }, 1000);
-  });
+// function fakeApiCall() {
+//   return new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve(
+//         "<b>The image shows signs of Pyogenic granulomas and hemorrhage (Can lead to cancer).</b>"
+//       );
+//     }, 1000);
+//   });
+// }
+
+async function fakeApiCall() {
+  const file = fileInput.files[0];
+
+  try{
+  const prediction = await callApi(file);
+  console.log(prediction)
+  return prediction
+
+  }catch(e){
+    console.log(e);
+  }
+}
+
+
+
+
+async function callApi(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("http://127.0.0.1:5000/predict", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    return data.prediction; // Extract prediction result
+  } catch (error) {
+    console.log(error)
+    return "Error: Unable to fetch results.";
+  }
 }
